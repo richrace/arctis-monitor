@@ -20,6 +20,7 @@
     "eslint-plugin-import": "^2.22.1"
   },
   "dependencies": {
+    "electron-tray-window": "^1.2.5",
     "node-hid": "^2.1.1"
   }
 }
