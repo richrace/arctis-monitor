@@ -1,58 +1,12 @@
-const {
-  app, BrowserWindow, ipcMain, Tray,
-// eslint-disable-next-line import/no-extraneous-dependencies
-} = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
+const { createTray } = require("./src/tray");
+const { updateStatus, checkWindowSize } = require("./src/arctis_view");
 
-const assetsDirectory = path.join(__dirname, 'assets');
-
-let tray;
-let window;
-
-const getWindowPosition = () => {
-  const windowBounds = window.getBounds();
-  const trayBounds = tray.getBounds();
-
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2);
-
-  // Position window 4 pixels vertically below the tray icon
-  const y = Math.round(trayBounds.y + trayBounds.height + 4);
-
-  return { x, y };
-};
-
-const showWindow = () => {
-  const position = getWindowPosition();
-  window.setPosition(position.x, position.y, false);
-  window.show();
-  window.focus();
-};
-
-const toggleWindow = () => {
-  if (window.isVisible()) {
-    window.hide();
-  } else {
-    showWindow();
-  }
-};
-
-const createTray = () => {
-  tray = new Tray(path.join(assetsDirectory, 'headphones.png'));
-  tray.on('right-click', toggleWindow);
-  tray.on('double-click', toggleWindow);
-  tray.on('click', (event) => {
-    toggleWindow();
-
-    // Show devtools when command clicked
-    if (window.isVisible() && process.defaultApp && event.metaKey) {
-      window.openDevTools({ mode: 'detach' });
-    }
-  });
-};
+let mainWindow;
 
 const createWindow = () => {
-  window = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     show: false,
     frame: false,
     width: 300,
@@ -70,31 +24,52 @@ const createWindow = () => {
       backgroundThrottling: false,
       nodeIntegration: true,
       enableRemoteModule: true,
+
+      preload: path.join(__dirname, "src/preload.js"),
     },
   });
-  window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
+  mainWindow.loadFile(path.join(__dirname, "index.html"));
 
   // Hide the window when it loses focus
-  window.on('blur', () => {
-    if (!window.webContents.isDevToolsOpened()) {
-      window.hide();
+  mainWindow.on("blur", () => {
+    if (!mainWindow.webContents.isDevToolsOpened()) {
+      mainWindow.hide();
     }
   });
+
+  return mainWindow;
 };
 
 // Don't show the app in the doc
 app.dock.hide();
 
-app.on('ready', () => {
-  createTray();
+function handleQuit() {
+  app.quit();
+}
+
+function updateView() {
+  const status = updateStatus();
+  mainWindow.webContents.send("handle-update", status.html);
+  checkWindowSize(mainWindow, status.numberOfDevices);
+}
+
+function initialize() {
+  updateView();
+}
+
+app.whenReady().then(() => {
+  ipcMain.on("quit", handleQuit);
+  ipcMain.on("init", initialize);
+
   createWindow();
+  createTray(mainWindow);
+
+  // Refresh 5 minutes
+  const time = 5 * 60 * 1000;
+  setInterval(updateView, time);
 });
 
 // Quit the app when the window is closed
-app.on('window-all-closed', () => {
-  app.quit();
-});
-
-ipcMain.on('quit-from-tray', () => {
+app.on("window-all-closed", () => {
   app.quit();
 });
