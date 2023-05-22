@@ -1,9 +1,9 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-const path = require("path");
-const { createTray } = require("./src/tray");
-const { updateStatus, checkWindowSize } = require("./src/arctis_view");
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const { createTray } = require('./tray');
+const { updateStatus, checkWindowSize } = require('./arctis_view');
 
-let mainWindow;
+let mainWindow: any;
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -23,15 +23,14 @@ const createWindow = () => {
       // hidden
       backgroundThrottling: false,
       nodeIntegration: true,
-      enableRemoteModule: true,
 
-      preload: path.join(__dirname, "src/preload.js"),
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  mainWindow.loadFile(path.join(__dirname, '../index.html'));
 
   // Hide the window when it loses focus
-  mainWindow.on("blur", () => {
+  mainWindow.on('blur', () => {
     if (!mainWindow.webContents.isDevToolsOpened()) {
       mainWindow.hide();
     }
@@ -49,7 +48,7 @@ function handleQuit() {
 
 function updateView() {
   const status = updateStatus();
-  mainWindow.webContents.send("handle-update", status.html);
+  mainWindow.webContents.send('handle-update', status.html);
   checkWindowSize(mainWindow, status.numberOfDevices);
 }
 
@@ -58,11 +57,11 @@ function initialize() {
 }
 
 app.whenReady().then(() => {
-  ipcMain.on("quit", handleQuit);
-  ipcMain.on("init", initialize);
+  ipcMain.on('quit', handleQuit);
+  ipcMain.on('init', initialize);
 
   createWindow();
-  createTray(mainWindow);
+  createTray(mainWindow, path);
 
   // Refresh 5 minutes
   const time = 5 * 60 * 1000;
@@ -70,6 +69,6 @@ app.whenReady().then(() => {
 });
 
 // Quit the app when the window is closed
-app.on("window-all-closed", () => {
+app.on('window-all-closed', () => {
   app.quit();
 });

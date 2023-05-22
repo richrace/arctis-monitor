@@ -1,4 +1,6 @@
-const { getHeadphones } = require("arctis-usb-finder");
+import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
+
+const { getHeadphones } = require('arctis-usb-finder');
 
 const deviceHTMLTemplate =
   " \
@@ -23,7 +25,7 @@ const deviceTurnedOffTemplate =
   <div> \
 ";
 
-function checkWindowSize(mainWindow, numberOfDevices) {
+function checkWindowSize(mainWindow: any, numberOfDevices: number) {
   const width = 300;
   const animate = false;
   const deviceRow = 62;
@@ -31,7 +33,7 @@ function checkWindowSize(mainWindow, numberOfDevices) {
 
   let height = otherPadding;
 
-  if (numberOfDevices.length > 0) {
+  if (numberOfDevices > 0) {
     height += deviceRow * numberOfDevices;
   }
 
@@ -40,42 +42,42 @@ function checkWindowSize(mainWindow, numberOfDevices) {
   mainWindow.setSize(width, height, animate);
 }
 
-const renderNotConnected = (device, deviceID) => {
+const renderNotConnected = (device: SimpleHeadphone, deviceID: string) => {
   return `${deviceTurnedOffTemplate}`
-    .replace("{{ deviceID }}", deviceID)
-    .replace("{{ product }}", device.modelName);
+    .replace('{{ deviceID }}', deviceID)
+    .replace('{{ product }}', device.modelName);
 };
 
-const renderConnected = (device, deviceID) => {
+const renderConnected = (device: SimpleHeadphone, deviceID: string) => {
   let percentage = device.batteryPercent > 100 ? 100 : device.batteryPercent;
   percentage = percentage < 0 ? 0 : percentage;
 
-  const muted = device.isMuted ? "Yes" : "No";
+  const muted = device.isMuted ? 'Yes' : 'No';
   const charging = device.isCharging;
   const discharging = device.isDischarging;
-  const dischargingIcon = discharging ? "down" : false;
-  const icon = charging ? "up" : dischargingIcon;
-  let chargingIcon = "";
+  const dischargingIcon = discharging ? 'down' : false;
+  const icon = charging ? 'up' : dischargingIcon;
+  let chargingIcon = '';
 
   if (icon) {
     chargingIcon = `<span class="icon icon-${icon}"></span>`;
   }
 
   return `${deviceHTMLTemplate}`
-    .replace("{{ deviceID }}", deviceID)
-    .replace("{{ product }}", device.modelName)
-    .replace("{{ batPercent }}", percentage)
-    .replace("{{ isMuted }}", muted)
-    .replace("{{ chargingStatus }}", chargingIcon);
+    .replace('{{ deviceID }}', deviceID)
+    .replace('{{ product }}', device.modelName)
+    .replace('{{ batPercent }}', percentage.toString())
+    .replace('{{ isMuted }}', muted)
+    .replace('{{ chargingStatus }}', chargingIcon);
 };
 
 const updateStatus = () => {
-  const devices = getHeadphones();
+  const devices: SimpleHeadphone[] = getHeadphones();
 
   if (devices.length === 0) {
     return {
       numberOfDevices: devices.length,
-      html: "<div>Sorry no devices found!</div>",
+      html: '<div>Sorry no devices found!</div>',
     };
   }
 
@@ -84,7 +86,7 @@ const updateStatus = () => {
 
     const deviceID = `device-${index}`;
 
-    let tempHtml = "";
+    let tempHtml = '';
 
     if (notConnected) {
       tempHtml = renderNotConnected(device, deviceID);
@@ -95,7 +97,7 @@ const updateStatus = () => {
     reducerHtml += tempHtml;
 
     return reducerHtml;
-  }, "");
+  }, '');
 
   return {
     numberOfDevices: devices.length,
