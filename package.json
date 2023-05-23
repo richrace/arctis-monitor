@@ -22,6 +22,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "arctis-usb-finder": "^0.0.11"
+    "arctis-usb-finder": "0.0.13"
   }
 }

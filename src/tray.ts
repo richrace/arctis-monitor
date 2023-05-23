@@ -1,49 +1,110 @@
-const { Tray } = require('electron');
+import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
+
+const { app, Tray, Menu, MenuItem } = require('electron');
+const { getHeadphones, refreshHeadphones } = require('arctis-usb-finder');
 
 let mainTray: any;
 
-const getWindowPosition = (mainWindow: any) => {
-  const windowBounds = mainWindow.getBounds();
-  const trayBounds = mainTray.getBounds();
+let cachedHeadphones: SimpleHeadphone[] = undefined;
 
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2);
-
-  // Position window 4 pixels vertically below the tray icon
-  const y = Math.round(trayBounds.y + trayBounds.height + 4);
-
-  return { x, y };
-};
-
-const showWindow = (mainWindow: any) => {
-  const position = getWindowPosition(mainWindow);
-  mainWindow.setPosition(position.x, position.y, false);
-  mainWindow.show();
-  mainWindow.focus();
-};
-
-const toggleWindow = (mainWindow: any) => {
-  if (mainWindow.isVisible()) {
-    mainWindow.hide();
+function loadHeadphones(force: boolean = false): SimpleHeadphone[] {
+  if (force || cachedHeadphones === undefined) {
+    cachedHeadphones = getHeadphones();
+    console.log('forced', cachedHeadphones);
   } else {
-    showWindow(mainWindow);
+    cachedHeadphones = refreshHeadphones(cachedHeadphones);
+    console.log('not forced', cachedHeadphones);
   }
+
+  return cachedHeadphones;
+}
+
+const parseHeadphone = (headphone: SimpleHeadphone) => {
+  if (!headphone.isConnected) {
+    return { label: `${headphone.modelName} - Not connected`, type: 'normal' };
+  }
+
+  let percentage = headphone.batteryPercent > 100 ? 100 : headphone.batteryPercent;
+  percentage = percentage < 0 ? 0 : percentage;
+
+  let text = `${headphone.modelName} - ${percentage}%`;
+  // Set the Tool Tip so we don't have to click to see a percentage
+  mainTray.setToolTip(`${text}`);
+
+  if (headphone.isCharging) {
+    text += ' 🔋 ';
+  }
+
+  if (headphone.isDischarging) {
+    text += ' 🪫 ';
+  }
+
+  if (headphone.isMuted) {
+    text += ' 🔇 ';
+  } else {
+    text += ' 🔊 ';
+  }
+
+  return { label: text };
 };
 
-const buildTray = (mainWindow: any, path: any) => {
+const quitMenuItem = () =>
+  new MenuItem({
+    label: 'Quit',
+    type: 'normal',
+    click: () => {
+      app.quit();
+    },
+  });
+
+const helpMenuItem = () =>
+  new MenuItem({
+    label: 'Help',
+    type: 'normal',
+    click: async () => {
+      const { shell } = require('electron');
+      await shell.openExternal('https://github.com/richrace/arctis-monitor');
+    },
+  });
+
+const buildTrayMenu = (force: boolean = false) => {
+  const headphones: SimpleHeadphone[] = loadHeadphones(force);
+
+  let menuItems = headphones.map(parseHeadphone);
+
+  if (menuItems.length === 0) {
+    menuItems.push({ label: 'No headphones found', type: 'normal' });
+  }
+
+  menuItems.push({ label: '', type: 'separator' });
+  menuItems.push(helpMenuItem());
+  menuItems.push(quitMenuItem());
+
+  const contextMenu = Menu.buildFromTemplate(menuItems);
+  mainTray.setContextMenu(contextMenu);
+};
+
+const buildTray = (path: any) => {
   const assetsDirectory = path.join(__dirname, '../assets');
-
   mainTray = new Tray(path.join(assetsDirectory, 'headphones.png'));
-  mainTray.on('right-click', () => toggleWindow(mainWindow));
-  mainTray.on('double-click', () => toggleWindow(mainWindow));
-  mainTray.on('click', (event: any) => {
-    toggleWindow(mainWindow);
 
-    // Show devtools when command clicked
-    if (mainWindow.isVisible() && (process as any).defaultApp && event.metaKey) {
-      mainWindow.openDevTools({ mode: 'detach' });
-    }
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'No Headphones USB devices plugged in', type: 'normal' },
+  ]);
+  mainTray.setToolTip('Arctis Headphones');
+  mainTray.setContextMenu(contextMenu);
+
+  mainTray.on('click', (event: { altKey: boolean }) => {
+    loadHeadphones(event.altKey);
+
+    buildTrayMenu();
   });
 };
+
+const minute = 60 * 1000;
+setInterval(buildTrayMenu, minute);
+
+const thirtyMinutes = 10 * 60 * 1000;
+setInterval(() => buildTrayMenu(true), thirtyMinutes);
 
 module.exports = { createTray: buildTray };
