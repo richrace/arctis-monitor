@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "npm run build && electron ./dist/main.js"
+    "start": "npm run build && electron ./dist/main.js",
+    "package": "electron-packager ./ --asar --platform=all --arch=x64,armv7l,arm64,mips64el --out=./out --icon=./assets/icon.icns --overwrite"
   },
+  "main": "./dist/main.js",
   "keywords": [],
   "author": "Richard Race",
   "license": "MIT",
@@ -16,6 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "electron": "^24.3.1",
+    "electron-packager": "^17.1.1",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "2.8.8",
