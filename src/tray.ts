@@ -28,11 +28,11 @@ const parseHeadphone = (headphone: SimpleHeadphone) => {
   let percentage = headphone.batteryPercent > 100 ? 100 : headphone.batteryPercent;
   percentage = percentage < 0 ? 0 : percentage;
 
-  mainTray.setTitle(` ${percentage}%`);
-
   let text = `${headphone.modelName} - ${percentage}%`;
-  // Set the Tool Tip so we don't have to click to see a percentage
+
+  // Set the Tool Tip and title so we don't have to click to see a percentage
   mainTray.setToolTip(`${text}`);
+  mainTray.setTitle(` ${percentage}%`);
 
   if (headphone.isCharging) {
     text += ' 🔋 ';
@@ -104,9 +104,11 @@ const buildTray = (path: any) => {
   buildTrayMenu();
 };
 
+// Refresh every minute
 const minute = 60 * 1000;
 setInterval(buildTrayMenu, minute);
 
+// Force refresh every thirty minutes to detect any use.
 const thirtyMinutes = 10 * 60 * 1000;
 setInterval(() => buildTrayMenu(true), thirtyMinutes);
 
