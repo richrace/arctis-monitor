@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { createTray } = require('./tray');
-const { updateStatus } = require('./arctis_view');
 
 let mainWindow: any;
 
