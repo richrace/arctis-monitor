@@ -21,11 +21,14 @@ function loadHeadphones(force: boolean = false): SimpleHeadphone[] {
 
 const parseHeadphone = (headphone: SimpleHeadphone) => {
   if (!headphone.isConnected) {
+    mainTray.setTitle('');
     return { label: `${headphone.modelName} - Not connected`, type: 'normal' };
   }
 
   let percentage = headphone.batteryPercent > 100 ? 100 : headphone.batteryPercent;
   percentage = percentage < 0 ? 0 : percentage;
+
+  mainTray.setTitle(` ${percentage}%`);
 
   let text = `${headphone.modelName} - ${percentage}%`;
   // Set the Tool Tip so we don't have to click to see a percentage
@@ -95,10 +98,10 @@ const buildTray = (path: any) => {
   mainTray.setContextMenu(contextMenu);
 
   mainTray.on('click', (event: { altKey: boolean }) => {
-    loadHeadphones(event.altKey);
-
-    buildTrayMenu();
+    buildTrayMenu(event.altKey);
   });
+
+  buildTrayMenu();
 };
 
 const minute = 60 * 1000;
