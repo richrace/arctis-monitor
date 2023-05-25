@@ -10,7 +10,7 @@
     "start": "npm run build && electron-forge start",
     "package": "npm run build && electron-forge package",
     "make": "npm run build && electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "npm run build && electron-forge publish"
   },
   "main": "./dist/main.js",
   "keywords": [],
