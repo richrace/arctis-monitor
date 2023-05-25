@@ -3,23 +3,37 @@
   "productName": "Arctis Monitor",
   "version": "0.0.1",
   "description": "Monitor your Arctis headphones for charging status",
-  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "package-mac": "electron-packager ./ --platform=darwin --arch=x64 --out=out --icon=./assets/icon.icns --overwrite"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "npm run build && electron-forge start",
+    "package": "npm run build && electron-forge package",
+    "make": "npm run build && electron-forge make"
   },
+  "main": "./dist/main.js",
   "keywords": [],
   "author": "Richard Race",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^11.1.1",
-    "electron-packager": "^15.2.0",
-    "eslint": "^7.17.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-dmg": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
+    "@electron-forge/publisher-github": "^6.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "electron": "^24.3.1",
+    "electron-packager": "^17.1.1",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "prettier": "2.8.8",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
-    "node-hid": "^2.1.1"
+    "arctis-usb-finder": "0.0.13",
+    "electron-squirrel-startup": "^1.0.0"
   }
 }
