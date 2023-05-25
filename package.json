@@ -49,7 +49,8 @@
               "maintainer": "Richard Race",
               "homepage": "https://github.com/richrace/arctis-monitor",
               "name": "Arctis Monitor",
-              "productName": "Arctis Monitor"
+              "productName": "Arctis Monitor",
+              "bin": "Arctis Monitor"
             }
           }
         },
