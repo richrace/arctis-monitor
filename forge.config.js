@@ -49,7 +49,7 @@ module.exports = {
           owner: 'richrace',
           name: 'arctis-monitor',
         },
-        prerelease: true,
+        prerelease: false,
         draft: true,
       },
     },
