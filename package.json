@@ -15,65 +15,6 @@
   "keywords": [],
   "author": "Richard Race",
   "license": "MIT",
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "./assets/icon.icns",
-        "out": "./out",
-        "overwrite": true,
-        "executableName": "Arctis Monitor"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "arctis-monitor"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {
-            "format": "ULFO"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {
-            "options": {
-              "maintainer": "Richard Race",
-              "homepage": "https://github.com/richrace/arctis-monitor",
-              "name": "Arctis Monitor",
-              "productName": "Arctis Monitor",
-              "bin": "arctis-monitor"
-            }
-          }
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "publishers": [
-        {
-          "name": "@electron-forge/publisher-github",
-          "config": {
-            "repository": {
-              "owner": "richrace",
-              "name": "arctis-monitor"
-            },
-            "prerelease": true,
-            "draft": true
-          }
-        }
-      ]
-    }
-  },
   "devDependencies": {
     "@electron-forge/cli": "^6.1.1",
     "@electron-forge/maker-deb": "^6.1.1",
