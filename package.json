@@ -7,11 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "npm run build && electron ./dist/main.js",
-    "package": "electron-packager ./ --asar --platform=all --arch=x64,armv7l,arm64,mips64el --out=./out --icon=./assets/icon.icns --overwrite",
-    "start-forge": "npm run build && electron-forge start",
-    "package-forge": "npm run build && electron-forge package",
-    "make-forge": "npm run build && electron-forge make"
+    "start": "npm run build && electron-forge start",
+    "package": "npm run build && electron-forge package",
+    "make": "npm run build && electron-forge make"
   },
   "main": "./dist/main.js",
   "keywords": [],

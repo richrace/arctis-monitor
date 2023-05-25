@@ -28,7 +28,7 @@ npm install
 
 and then
 ```
-npm run start-forge
+npm start
 ```
 
 ## Credtis
