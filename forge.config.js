@@ -11,6 +11,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'arctis-monitor',
+        iconUrl: 'https://raw.githubusercontent.com/richrace/arctis-monitor/main/assets/icon.ico',
       },
     },
     {
