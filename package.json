@@ -20,7 +20,8 @@
       "packagerConfig": {
         "icon": "./assets/icon.icns",
         "out": "./out",
-        "overwrite": true
+        "overwrite": true,
+        "executableName": "Arctis Monitor"
       },
       "makers": [
         {
@@ -43,13 +44,12 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "executableName": "arctis-monitor",
           "config": {
             "options": {
               "maintainer": "Richard Race",
               "homepage": "https://github.com/richrace/arctis-monitor",
-              "name": "arctis-monitor",
-              "productName": "arctis-monitor"
+              "name": "Arctis Monitor",
+              "productName": "Arctis Monitor"
             }
           }
         },
@@ -58,7 +58,6 @@
           "config": {}
         }
       ],
-      "buildIdentifier": "arctis-monitor-app-build",
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
