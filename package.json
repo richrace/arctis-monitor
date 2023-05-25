@@ -43,10 +43,13 @@
         },
         {
           "name": "@electron-forge/maker-deb",
+          "executableName": "arctis-monitor",
           "config": {
             "options": {
               "maintainer": "Richard Race",
-              "homepage": "https://github.com/richrace/arctis-monitor"
+              "homepage": "https://github.com/richrace/arctis-monitor",
+              "name": "arctis-monitor",
+              "productName": "arctis-monitor"
             }
           }
         },
@@ -55,6 +58,7 @@
           "config": {}
         }
       ],
+      "buildIdentifier": "arctis-monitor-app-build",
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
