@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { createTray } = require('./tray');
 
+if (require('electron-squirrel-startup')) app.quit();
+
 let mainWindow: any;
 
 const createWindow = () => {

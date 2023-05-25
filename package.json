@@ -8,13 +8,78 @@
     "build": "tsc",
     "watch": "tsc -w",
     "start": "npm run build && electron ./dist/main.js",
-    "package": "electron-packager ./ --asar --platform=all --arch=x64,armv7l,arm64,mips64el --out=./out --icon=./assets/icon.icns --overwrite"
+    "package": "electron-packager ./ --asar --platform=all --arch=x64,armv7l,arm64,mips64el --out=./out --icon=./assets/icon.icns --overwrite",
+    "start-forge": "npm run build && electron-forge start",
+    "package-forge": "npm run build && electron-forge package",
+    "make-forge": "npm run build && electron-forge make"
   },
   "main": "./dist/main.js",
   "keywords": [],
   "author": "Richard Race",
   "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./assets/icon.icns",
+        "out": "./out",
+        "overwrite": true
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "arctis-monitor"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "format": "ULFO"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "maintainer": "Richard Race",
+              "homepage": "https://github.com/richrace/arctis-monitor"
+            }
+          }
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "richrace",
+              "name": "arctis-monitor"
+            },
+            "prerelease": true,
+            "draft": true
+          }
+        }
+      ]
+    }
+  },
   "devDependencies": {
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-dmg": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
+    "@electron-forge/publisher-github": "^6.1.1",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "electron": "^24.3.1",
@@ -25,6 +90,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "arctis-usb-finder": "0.0.13"
+    "arctis-usb-finder": "0.0.13",
+    "electron-squirrel-startup": "^1.0.0"
   }
 }
