@@ -1,5 +1,8 @@
 name: Build
-on: [push, pull_request]
+on:
+  push:
+    branches: '*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,11 +14,11 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 19
-    - name: install dependencies
-      run: npm install
-    - name: build
-      run: npm run make
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 19
+      - name: install dependencies
+        run: npm ci
+      - name: build
+        run: npm run make
