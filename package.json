@@ -1,7 +1,7 @@
 {
   "name": "arctis-monitor",
   "productName": "Arctis Monitor",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Monitor your Arctis headphones for charging status",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
