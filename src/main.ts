@@ -1,6 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const { createTray } = require('./tray');
+import { app, BrowserWindow } from 'electron';
+import createTray from './tray';
+
+import path = require('path');
 
 if (require('electron-squirrel-startup')) app.quit();
 
