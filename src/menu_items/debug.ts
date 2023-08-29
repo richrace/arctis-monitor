@@ -2,7 +2,7 @@ import ProbeResult from 'arctis-usb-finder/dist/interfaces/probe_result';
 import UsbDevice from 'arctis-usb-finder/dist/interfaces/usb_device';
 import Probe from 'arctis-usb-finder/dist/use_cases/probe';
 
-import { MenuItem } from 'electron';
+import { MenuItem, clipboard } from 'electron';
 
 function debugMenu(): MenuItem {
   const probe = new Probe();
@@ -37,13 +37,31 @@ function debugMenu(): MenuItem {
 
   if (foundHeadphones.length > 0) {
     probeMenuItems = foundHeadphones.reduce((menuItems, result: ProbeResult) => {
+      const path = result.device.path();
+
       menuItems.push({
         label: result.device.realDevice().product,
         submenu: [
           { label: `Product ID: ${result.device.productId}` },
-          { label: `Bytes: ${result.matchedBytes}` },
-          { label: `Report: ${result.matchedReport}` },
-          { label: `Path: ${result.device.path()}` },
+          {
+            label: `Bytes: ${result.matchedBytes}`,
+            click: () => {
+              clipboard.writeText(`Bytes: ${result.matchedBytes}`);
+            },
+          },
+          {
+            label: `Report: ${result.matchedReport}`,
+            click: () => {
+              clipboard.writeText(`Report: ${result.matchedReport}`);
+            },
+          },
+          {
+            label: `Path: ${path.slice(0, 50)}...`,
+            toolTip: `Path: ${path}`,
+            click: () => {
+              clipboard.writeText(`Path: ${path}`);
+            },
+          },
         ],
       });
 
