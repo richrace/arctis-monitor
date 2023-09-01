@@ -1,14 +1,17 @@
-import { getHeadphones, refreshHeadphones } from 'arctis-usb-finder';
+import ArctisUsbFinder from 'arctis-usb-finder';
 import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
 
 let cachedHeadphones: SimpleHeadphone[] = undefined;
+const arctisUsbFinder = new ArctisUsbFinder();
 
 function loadHeadphones(force: boolean = false): SimpleHeadphone[] {
   if (force || cachedHeadphones === undefined) {
-    cachedHeadphones = getHeadphones();
+    arctisUsbFinder.loadHeadphones();
+    cachedHeadphones = arctisUsbFinder.simpleHeadphones();
     console.log('forced', cachedHeadphones);
   } else {
-    cachedHeadphones = refreshHeadphones(cachedHeadphones);
+    arctisUsbFinder.refreshHeadphones();
+    cachedHeadphones = arctisUsbFinder.simpleHeadphones();
     console.log('not forced', cachedHeadphones);
   }
 

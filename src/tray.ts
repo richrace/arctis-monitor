@@ -40,16 +40,17 @@ const createTray = (path: any) => {
   mainTray.setToolTip('Arctis Headphones');
   mainTray.setContextMenu(contextMenu);
 
-  mainTray.on('click', (event: { altKey: boolean }) => {
+  mainTray.on('click', (event: { altKey: boolean; ctrlKey: boolean }) => {
     const debug = event.altKey;
-    buildTrayMenu(debug, debug);
+    const force = event.ctrlKey;
+    buildTrayMenu(force, debug);
   });
 
   buildTrayMenu();
 };
 
-// Refresh every minute
-const minute = 60 * 1000;
+// Refresh every five minutes
+const minute = 300 * 1000;
 setInterval(buildTrayMenu, minute);
 
 // Force refresh every thirty minutes to detect any use.
