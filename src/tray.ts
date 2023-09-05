@@ -5,12 +5,13 @@ import exportView from './headphone_view';
 import debugMenu from './menu_items/debug';
 import helpMenuItem from './menu_items/help';
 import quitMenuItem from './menu_items/quit';
-import loadHeadphones from './load_headphones';
+import HeadphoneManager from './headphone_manager';
 
 let mainTray: any;
+const headphoneManager = new HeadphoneManager();
 
 const buildTrayMenu = (force: boolean = false, debug: boolean = false) => {
-  const headphones: SimpleHeadphone[] = loadHeadphones(force);
+  const headphones: SimpleHeadphone[] = headphoneManager.loadHeadphones(force);
   const menuItems = headphones.map((headphone) => exportView(mainTray, headphone));
 
   if (menuItems.length === 0) {
