@@ -1,5 +1,6 @@
 import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
 
+import * as emoji from 'node-emoji';
 import { MenuItem } from 'electron';
 
 function exportView(mainTray: any, headphone: SimpleHeadphone) {
@@ -17,18 +18,20 @@ function exportView(mainTray: any, headphone: SimpleHeadphone) {
   mainTray.setToolTip(`${text}`);
   mainTray.setTitle(` ${percentage}%`);
 
-  if (headphone.isCharging) {
-    text += ' 🔋 ';
+  if (percentage === 100) {
+    text += emoji.emojify(' :battery: ', { fallback: ' fully charged ' });
+  } else if (headphone.isCharging) {
+    text += emoji.emojify(' :battery: ', { fallback: ' charging ' });
   }
 
   if (headphone.isDischarging) {
-    text += ' 🪫 ';
+    text += emoji.emojify(' :low_battery: ', { fallback: ' discharging ' });
   }
 
   if (headphone.isMuted) {
-    text += ' 🔇 ';
+    text += emoji.emojify(' :muted_speaker: ', { fallback: ' muted ' });
   } else {
-    text += ' 🔊 ';
+    text += emoji.emojify(' :high_volume_speaker: ', { fallback: ' not muted ' });
   }
 
   return new MenuItem({ label: text });
