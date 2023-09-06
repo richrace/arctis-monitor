@@ -41,9 +41,9 @@ const createTray = (path: any) => {
   mainTray.setToolTip('Arctis Headphones');
   mainTray.setContextMenu(contextMenu);
 
-  mainTray.on('click', (event: { altKey: boolean; ctrlKey: boolean }) => {
+  mainTray.on('click', (event: { altKey: boolean; shiftKey: boolean }) => {
     const debug = event.altKey;
-    const force = event.ctrlKey;
+    const force = event.shiftKey;
     buildTrayMenu(force, debug);
   });
 
