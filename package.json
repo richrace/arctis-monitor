@@ -13,7 +13,13 @@
     "publish": "npm run build && electron-forge publish"
   },
   "main": "./dist/main.js",
-  "keywords": [],
+  "keywords": [
+    "arctis",
+    "steelseries",
+    "headphones",
+    "tray",
+    "battery"
+  ],
   "author": "Richard Race",
   "license": "MIT",
   "devDependencies": {
