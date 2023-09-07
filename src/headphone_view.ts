@@ -17,18 +17,20 @@ function exportView(mainTray: any, headphone: SimpleHeadphone) {
   mainTray.setToolTip(`${text}`);
   mainTray.setTitle(` ${percentage}%`);
 
-  if (headphone.isCharging) {
-    text += ' 🔋 ';
+  if (percentage === 100) {
+    text += ' \uD83D\uDD0B ';
+  } else if (headphone.isCharging) {
+    text += ' \uD83D\uDD0B ';
   }
 
   if (headphone.isDischarging) {
-    text += ' 🪫 ';
+    text += ' \uD83E\uDEAB ';
   }
 
   if (headphone.isMuted) {
-    text += ' 🔇 ';
+    text += ' \uD83D\uDD07 ';
   } else {
-    text += ' 🔊 ';
+    text += ' \uD83D\uDD0A ';
   }
 
   return new MenuItem({ label: text });

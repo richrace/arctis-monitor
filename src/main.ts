@@ -1,11 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import createTray from './tray';
 
-import path = require('path');
-
 if (require('electron-squirrel-startup')) app.quit();
 
-let mainWindow: any;
+let mainWindow: BrowserWindow;
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -30,13 +28,9 @@ const createWindow = () => {
 // Don't show the app in the doc
 app.dock?.hide();
 
-function handleQuit() {
-  app.quit();
-}
-
 app.whenReady().then(() => {
   createWindow();
-  createTray(path);
+  createTray();
 });
 
 // Quit the app when the window is closed

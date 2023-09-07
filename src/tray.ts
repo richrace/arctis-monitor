@@ -1,13 +1,18 @@
+import path = require('path');
+
 import { Tray, Menu, MenuItem } from 'electron';
 import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
+import Host from 'arctis-usb-finder/dist/utils/host';
 
 import exportView from './headphone_view';
 import debugMenu from './menu_items/debug';
 import helpMenuItem from './menu_items/help';
 import quitMenuItem from './menu_items/quit';
 import HeadphoneManager from './headphone_manager';
+import HandleThemes from './windows/handle_themes';
+import iconPicker from './windows/icon_picker';
 
-let mainTray: any;
+let mainTray: Tray;
 const headphoneManager = new HeadphoneManager();
 
 const buildTrayMenu = (force: boolean = false, debug: boolean = false) => {
@@ -31,9 +36,24 @@ const buildTrayMenu = (force: boolean = false, debug: boolean = false) => {
   mainTray.setContextMenu(contextMenu);
 };
 
-const createTray = (path: any) => {
+const icon = (): string => {
   const assetsDirectory = path.join(__dirname, '../assets');
-  mainTray = new Tray(path.join(assetsDirectory, 'headphones.png'));
+
+  if (Host.isMac()) {
+    return path.join(assetsDirectory, 'headphonesTemplate.png');
+  } else {
+    return path.join(assetsDirectory, 'headphonesTemplate@2x.png');
+  }
+};
+
+const createTray = async () => {
+  if (Host.isWin()) {
+    const handleThemes = new HandleThemes();
+    mainTray = new Tray(iconPicker(await handleThemes.isUsedSystemLightTheme()));
+    handleThemes.tray = mainTray;
+  } else {
+    mainTray = new Tray(icon());
+  }
 
   const contextMenu = Menu.buildFromTemplate([
     { label: 'No Headphones USB devices plugged in', type: 'normal' },
