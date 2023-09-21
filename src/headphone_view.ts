@@ -17,9 +17,7 @@ function exportView(mainTray: any, headphone: SimpleHeadphone) {
   mainTray.setToolTip(`${text}`);
   mainTray.setTitle(` ${percentage}%`);
 
-  if (percentage === 100) {
-    text += ' \uD83D\uDD0B ';
-  } else if (headphone.isCharging) {
+  if (percentage === 100 || headphone.isCharging) {
     text += ' \uD83D\uDD0B ';
   }
 
