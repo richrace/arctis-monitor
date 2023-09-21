@@ -43,7 +43,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "arctis-usb-finder": "^0.0.19",
+    "arctis-usb-finder": "^0.0.21",
     "electron-squirrel-startup": "^1.0.0",
     "winreg": "^1.2.4"
   }
