@@ -12,13 +12,22 @@ This Electron application will create a Tray application to show the current bat
 
 Supported headsets are provided by [Arctis USB Finder](https://github.com/richrace/arctis-usb-finder). They are:
 
-* Arctis 7 2019
+* Arctis Pro Wireless
 * Arctis 7 2017
-* Arctis Pro
-* Arctis 1 Wireless
+* Arctis 7 2019
+* Arctis Pro 2019
+* Arctis Pro GameDac
 * Arctis 9
+* Arctis 1 Wireless
+* Arctis 1 Xbox
 * Arctis 7X
-* Arctis 7+ 2022
+* Arctis 7 Plus
+* Arctis 7P Plus
+* Arctis 7X Plus
+* Arctis 7 Destiny Plus
+* Arctis Nova 7
+* Arctis Nova 7X
+* Arctis Nova 7P
 
 If yours isn't on the list follow the instructions on the [Arctis USB Finder's Probe](https://github.com/richrace/arctis-usb-finder#probe)
 
