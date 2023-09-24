@@ -37,7 +37,7 @@ If yours isn't on the list follow the instructions on the [Arctis USB Finder's P
 
 ### Windows
 
-To get the debug menu you have to press the <kbd>⇧ Shift</kbd> key at the same time you click, and then right click to
+To get the debug menu you have to press the <kbd>Alt</kbd> key at the same time you click, and then right click to
 load the menu.
 
 #### Install Location
@@ -46,7 +46,7 @@ File explorer: `%localappdata%\arctis-monitor` double click `arctis-monitor`.
 
 #### Force
 
-To force load a refresh of headphones press the <kbd>Alt</kbd> key at the same time you click, and then right click to
+To force load a refresh of headphones press the <kbd>⇧ Shift</kbd> key at the same time you click, and then right click to
 see any changes.
 
 ### macOS
