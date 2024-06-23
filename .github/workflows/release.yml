@@ -6,12 +6,12 @@ on:
       - released
 
 jobs:
-  release:
+  release-macos:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-13, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +29,25 @@ jobs:
           python3 -m pip install setuptools
           npm install -g appdmg@0.6.6
 
+      - name: install dependencies
+        run: npm ci
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish
+
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: install dependencies
         run: npm ci
       - name: publish
