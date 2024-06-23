@@ -30,6 +30,7 @@ Supported headsets are provided by [Arctis USB Finder](https://github.com/richra
 * Arctis Nova 7
 * Arctis Nova 7X
 * Arctis Nova 7P
+* Arctis 7P
 
 If yours isn't on the list follow the instructions on the [Arctis USB Finder's Probe](https://github.com/richrace/arctis-usb-finder#probe)
 
