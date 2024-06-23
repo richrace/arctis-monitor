@@ -11,13 +11,24 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: setup appdmg
+        run: |
+          python3 -m pip install setuptools
+          npm install -g appdmg@0.6.6
+
       - name: install dependencies
         run: npm ci
       - name: publish
