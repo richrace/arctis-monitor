@@ -28,8 +28,11 @@ Supported headsets are provided by [Arctis USB Finder](https://github.com/richra
 * Arctis 7X Plus
 * Arctis 7 Destiny Plus
 * Arctis Nova 7
+* Arctis Nova 7 Diablo IV
 * Arctis Nova 7X
+* Arctis Nova 7X V2
 * Arctis Nova 7P
+* Arctis Nova Pro Wireless
 * Arctis 7P
 
 If yours isn't on the list follow the instructions on the [Arctis USB Finder's Probe](https://github.com/richrace/arctis-usb-finder#probe)
