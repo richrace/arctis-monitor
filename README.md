@@ -6,7 +6,7 @@ This Electron application will create a Tray application to show the current bat
 
 ![Screen shot showing the app, with battery percentage, help and quit actions on Windows](docs/arctis-monitor-windows.png)
 
-## [See the Releases Page](https://github.com/richrace/arctis-monitor/releases)
+## Installation: [See the Releases Page](https://github.com/richrace/arctis-monitor/releases)
 
 [Releases page for downloads for macOS, Windows and Linux](https://github.com/richrace/arctis-monitor/releases).
 
