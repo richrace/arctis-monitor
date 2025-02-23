@@ -8,7 +8,7 @@ This Electron application will create a Tray application to show the current bat
 
 ## Installation: [See the Releases Page](https://github.com/richrace/arctis-monitor/releases)
 
-[Releases page for downloads for macOS, Windows and Linux](https://github.com/richrace/arctis-monitor/releases).
+[Releases page for downloads for macOS and Windows](https://github.com/richrace/arctis-monitor/releases).
 
 ## Supported Headsets:
 
