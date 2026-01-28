@@ -4,7 +4,7 @@ import { Tray, Menu, MenuItem } from 'electron';
 import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
 import Host from 'arctis-usb-finder/dist/utils/host';
 
-import exportView, { TrayInfo, getModelType, getShortName, getAbbrevName, ModelType } from './headphone_view';
+import exportView, { TrayInfo, getModelType, getShortName, getAbbrevName, getModelPriority, shortenModelName, ModelType } from './headphone_view';
 import debugMenu from './menu_items/debug';
 import helpMenuItem from './menu_items/help';
 import quitMenuItem from './menu_items/quit';
@@ -50,8 +50,20 @@ function computeDisplayNames(headphones: SimpleHeadphone[]): string[] {
 
 const buildTrayMenu = (force: boolean = false, debug: boolean = false) => {
   const headphones: SimpleHeadphone[] = headphoneManager.loadHeadphones(force);
+
+  // Sort by priority: Elite first, then Pro, then Nova 7/5/1
+  headphones.sort((a, b) => {
+    const priorityA = getModelPriority(getModelType(a.modelName));
+    const priorityB = getModelPriority(getModelType(b.modelName));
+    return priorityA - priorityB;
+  });
+
   const displayNames = computeDisplayNames(headphones);
-  const trayInfos: TrayInfo[] = headphones.map((headphone, i) => exportView(headphone, displayNames[i]));
+  // Use shortened model names for alignment calculation
+  const maxModelLen = headphones.reduce((max, hp) => Math.max(max, shortenModelName(hp.modelName).length), 0);
+  // Check if any connected device has 100% battery (for alignment purposes)
+  const hasAny100Percent = headphones.some((hp) => hp.isConnected && hp.batteryPercent === 100);
+  const trayInfos: TrayInfo[] = headphones.map((headphone, i) => exportView(headphone, displayNames[i], maxModelLen, hasAny100Percent));
   const menuItems = trayInfos.map((info) => info.menuItem);
 
   if (menuItems.length === 0) {
