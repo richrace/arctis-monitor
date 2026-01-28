@@ -4,7 +4,7 @@ import { Tray, Menu, MenuItem } from 'electron';
 import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone';
 import Host from 'arctis-usb-finder/dist/utils/host';
 
-import exportView, { TrayInfo } from './headphone_view';
+import exportView, { TrayInfo, getModelType, getShortName, getAbbrevName, ModelType } from './headphone_view';
 import debugMenu from './menu_items/debug';
 import helpMenuItem from './menu_items/help';
 import quitMenuItem from './menu_items/quit';
@@ -15,9 +15,43 @@ import iconPicker from './windows/icon_picker';
 let mainTray: Tray;
 const headphoneManager = new HeadphoneManager();
 
+// Compute display names for headphones based on count
+// - 2 or fewer: use short names like "Elite", "Pro"
+// - 3+: use abbreviated names like "E", "P"
+// - Multiple of same type: add numeric suffix like "E1", "E2", "P1", "P2"
+function computeDisplayNames(headphones: SimpleHeadphone[]): string[] {
+  const useAbbrev = headphones.length > 2;
+
+  // Count occurrences of each model type
+  const typeCounts: Map<ModelType, number> = new Map();
+  for (const hp of headphones) {
+    const type = getModelType(hp.modelName);
+    typeCounts.set(type, (typeCounts.get(type) || 0) + 1);
+  }
+
+  // Track current index for each type (for numbering duplicates)
+  const typeIndices: Map<ModelType, number> = new Map();
+
+  return headphones.map((hp) => {
+    const type = getModelType(hp.modelName);
+    const count = typeCounts.get(type) || 1;
+    const baseName = useAbbrev ? getAbbrevName(type) : getShortName(type);
+
+    if (count > 1) {
+      // Multiple of same type - add numeric suffix
+      const idx = (typeIndices.get(type) || 0) + 1;
+      typeIndices.set(type, idx);
+      return `${baseName}${idx}`;
+    }
+
+    return baseName;
+  });
+}
+
 const buildTrayMenu = (force: boolean = false, debug: boolean = false) => {
   const headphones: SimpleHeadphone[] = headphoneManager.loadHeadphones(force);
-  const trayInfos: TrayInfo[] = headphones.map((headphone) => exportView(headphone));
+  const displayNames = computeDisplayNames(headphones);
+  const trayInfos: TrayInfo[] = headphones.map((headphone, i) => exportView(headphone, displayNames[i]));
   const menuItems = trayInfos.map((info) => info.menuItem);
 
   if (menuItems.length === 0) {
@@ -100,12 +134,12 @@ const createTray = async () => {
   buildTrayMenu();
 };
 
-// Refresh every five minutes
-const minute = 300 * 1000;
-setInterval(buildTrayMenu, minute);
+// Refresh battery status every 5 minutes
+const fiveMinutes = 5 * 60 * 1000;
+setInterval(buildTrayMenu, fiveMinutes);
 
-// Force refresh every thirty minutes to detect any use.
-const thirtyMinutes = 10 * 60 * 1000;
-setInterval(() => buildTrayMenu(true), thirtyMinutes);
+// Force refresh every 10 minutes to detect new/removed devices
+const tenMinutes = 10 * 60 * 1000;
+setInterval(() => buildTrayMenu(true), tenMinutes);
 
 export default createTray;

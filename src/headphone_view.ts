@@ -2,16 +2,35 @@ import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone'
 
 import { MenuItem } from 'electron';
 
-// Extract short name from model (e.g., "Arctis Nova Elite" -> "Elite", "Arctis Nova Pro Wireless" -> "Pro")
-function getShortName(modelName: string): string {
+// Model type keys for grouping devices
+export type ModelType = 'Elite' | 'Pro' | 'Nova7' | 'Nova5' | 'Nova1' | 'Other';
+
+// Extract model type from model name
+export function getModelType(modelName: string): ModelType {
   if (modelName.includes('Elite')) return 'Elite';
   if (modelName.includes('Pro')) return 'Pro';
   if (modelName.includes('Nova 7')) return 'Nova7';
   if (modelName.includes('Nova 5')) return 'Nova5';
   if (modelName.includes('Nova 1')) return 'Nova1';
-  // Fallback: use last word
-  const parts = modelName.split(' ');
-  return parts[parts.length - 1];
+  return 'Other';
+}
+
+// Get short name for a model type (used when 2 or fewer total devices)
+export function getShortName(modelType: ModelType): string {
+  if (modelType === 'Other') return '?';
+  return modelType;
+}
+
+// Get abbreviated name for a model type (used when 3+ total devices)
+export function getAbbrevName(modelType: ModelType): string {
+  switch (modelType) {
+    case 'Elite': return 'E';
+    case 'Pro': return 'P';
+    case 'Nova7': return '7';
+    case 'Nova5': return '5';
+    case 'Nova1': return '1';
+    default: return '?';
+  }
 }
 
 export interface TrayInfo {
@@ -20,15 +39,14 @@ export interface TrayInfo {
   tooltipSegment: string;
 }
 
-function exportView(headphone: SimpleHeadphone): TrayInfo {
+// displayName is computed by tray.ts based on device count (e.g., "Elite", "E", "E1", "P2")
+function exportView(headphone: SimpleHeadphone, displayName: string): TrayInfo {
   // Check for base station battery (show even if headset not connected)
   let percentage2: number | undefined;
   if (headphone.batteryPercent2 !== undefined) {
     percentage2 = headphone.batteryPercent2 > 100 ? 100 : headphone.batteryPercent2;
     percentage2 = percentage2 < 0 ? 0 : percentage2;
   }
-
-  const shortName = getShortName(headphone.modelName);
 
   if (!headphone.isConnected) {
     // Check if base station battery is present
@@ -38,7 +56,7 @@ function exportView(headphone: SimpleHeadphone): TrayInfo {
                        (percentage2 !== undefined && percentage2 > 0);
 
     // Build label with base station battery if available
-    let label = `${headphone.modelName} - Not connected`;
+    let label = `${headphone.modelName}: Powered Off`;
     if (hasBattery && percentage2 !== undefined) {
       const baseIcon = percentage2 === 0 ? '\uD83E\uDEAB' : '\uD83D\uDD0B'; // 🪫 or 🔋
       label += `     Base: ${baseIcon} ${percentage2}%`;
@@ -48,21 +66,27 @@ function exportView(headphone: SimpleHeadphone): TrayInfo {
     let traySegment: string | null = null;
     if (hasBattery && percentage2 !== undefined) {
       const baseIcon = percentage2 === 0 ? '\uD83E\uDEAB' : '\uD83D\uDD0B';
-      traySegment = `\uD83D\uDD07${shortName} ${baseIcon}${percentage2}%`; // 🔇 mute emoji for disconnected
+      traySegment = `\uD83D\uDD07${displayName} ${baseIcon}${percentage2}%`; // 🔇 mute emoji for disconnected
+    }
+
+    // Build tooltip segment with base battery info
+    let tooltipSegment = `${headphone.modelName}: Powered Off`;
+    if (hasBattery && percentage2 !== undefined) {
+      tooltipSegment += ` / Base: ${percentage2}%`;
     }
 
     return {
       menuItem: new MenuItem({ label, type: 'normal' }),
       traySegment,
-      tooltipSegment: `${headphone.modelName} - Not connected`
+      tooltipSegment
     };
   }
 
   let percentage = headphone.batteryPercent > 100 ? 100 : headphone.batteryPercent;
   percentage = percentage < 0 ? 0 : percentage;
 
-  // Build menu text: "Model - XX% [icons]    Base: YY% [icon]"
-  let text = `${headphone.modelName} - ${percentage}%`;
+  // Build menu text: "Model: XX% [icons]    Base: YY% [icon]"
+  let text = `${headphone.modelName}: ${percentage}%`;
 
   // Add headset battery/status icons
   if (percentage === 100 || headphone.isCharging) {
@@ -90,16 +114,16 @@ function exportView(headphone: SimpleHeadphone): TrayInfo {
     }
   }
 
-  // Build tray segment: "🎧Elite 🪫71%/🔋100%" or "🎧Pro 🔋100%/🔋100%"
+  // Build tray segment: "🎧Elite 🪫71%/🔋100%" or "🎧P1 🔋100%/🔋100%"
   const headsetIcon = (percentage === 0 || headphone.isDischarging) ? '\uD83E\uDEAB' : '\uD83D\uDD0B';
-  let traySegment = `\uD83C\uDFA7${shortName} ${headsetIcon}${percentage}%`; // 🎧 headphones emoji
+  let traySegment = `\uD83C\uDFA7${displayName} ${headsetIcon}${percentage}%`; // 🎧 headphones emoji
   if (percentage2 !== undefined) {
     const baseIcon = percentage2 === 0 ? '\uD83E\uDEAB' : '\uD83D\uDD0B';
     traySegment += `/${baseIcon}${percentage2}%`;
   }
 
   // Build tooltip segment
-  let tooltipSegment = `${headphone.modelName} - ${percentage}%`;
+  let tooltipSegment = `${headphone.modelName}: ${percentage}%`;
   if (percentage2 !== undefined) {
     tooltipSegment += ` / Base: ${percentage2}%`;
   }
