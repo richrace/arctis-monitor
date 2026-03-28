@@ -3,17 +3,22 @@ import SimpleHeadphone from 'arctis-usb-finder/dist/interfaces/simple_headphone'
 
 export default class HeadphoneManager {
   static arctisUsbFinder = new ArctisUsbFinder();
-  private cachedHeadphones: SimpleHeadphone[];
+  private cachedHeadphones: SimpleHeadphone[] = [];
 
   loadHeadphones(force: boolean = false): SimpleHeadphone[] {
-    if (force || this.cachedHeadphones === undefined) {
-      HeadphoneManager.arctisUsbFinder.loadHeadphones();
-      this.cachedHeadphones = HeadphoneManager.arctisUsbFinder.simpleHeadphones();
-      console.log('forced', this.cachedHeadphones);
-    } else {
-      HeadphoneManager.arctisUsbFinder.refreshHeadphones();
-      this.cachedHeadphones = HeadphoneManager.arctisUsbFinder.simpleHeadphones();
-      console.log('not forced', this.cachedHeadphones);
+    try {
+      if (force || this.cachedHeadphones.length === 0) {
+        HeadphoneManager.arctisUsbFinder.loadHeadphones();
+        this.cachedHeadphones = HeadphoneManager.arctisUsbFinder.simpleHeadphones();
+      } else {
+        HeadphoneManager.arctisUsbFinder.refreshHeadphones();
+        this.cachedHeadphones = HeadphoneManager.arctisUsbFinder.simpleHeadphones();
+      }
+    } catch (error) {
+      // Handle errors gracefully (e.g., device disconnected, wake from sleep)
+      // Return empty array so tray shows "No headphones found"
+      console.error('Error loading headphones:', error);
+      this.cachedHeadphones = [];
     }
 
     return this.cachedHeadphones;
